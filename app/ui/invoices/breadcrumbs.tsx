@@ -10,8 +10,7 @@ interface Breadcrumb {
 
 export default function Breadcrumbs({
   breadcrumbs,
-}: {
-  breadcrumbs: Breadcrumb[];
+}: { readonly breadcrumbs: Breadcrumb[];
 }) {
   return (
     <nav aria-label="Breadcrumb" className="mb-6 block">
