@@ -10,7 +10,11 @@ import {
 import Link from 'next/link';
 import { Button } from '@/app/ui/button';
 import { useActionState } from 'react';
+import { Metadata } from 'next';
 
+export const metadata: Metadata = {
+  title: 'Edit Invoice',
+};
 export default function EditInvoiceForm({
   invoice,
   customers,
