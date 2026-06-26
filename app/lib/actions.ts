@@ -6,6 +6,7 @@ import { revalidatePath } from 'next/cache';
 import { redirect } from 'next/navigation';
 import { signIn } from '@/auth';
 import { AuthError } from 'next-auth';
+import { randomUUID } from 'crypto';
 
 const sql = postgres(process.env.POSTGRES_URL!, { ssl: 'require' });
  
@@ -22,9 +23,29 @@ const FormSchema = z.object({
   }),
   date: z.string(),
 });
+const FormCustomerSchema = z.object({
+  id: z.string(),
+  name: z.string({
+    invalid_type_error: 'Please enter a name.',
+    required_error: 'Name is required.'
+  })
+  .min(3, {
+    message: 'Name must be at least 3 characters long'
+  })
+  .regex(/^[a-zA-Z\s]+$/, { 
+    message: 'Name can only contain alphabetic characters and spaces.' 
+  }),
+  email: z.string({
+    required_error: 'Email is required.'
+  }).email({
+    message: 'Invalid email address format.'
+  }),
+});
  
 const CreateInvoice = FormSchema.omit({ id: true, date: true });
 const UpdateInvoice = FormSchema.omit({ id: true, date: true });
+const CreateCustomer = FormCustomerSchema.omit({id : true})
+const UpdateCustomer = FormCustomerSchema.omit({id: true})
 
 export type State = {
   errors?: {
@@ -34,6 +55,14 @@ export type State = {
   };
   message?: string | null;
 };
+
+export type StateCustomer = {
+  errors?: {
+    name?: string[];
+    email?: string[];
+  };
+  message?: string | null
+}
  
 export async function createInvoice(prevState: State, formData: FormData) {
   // Validate form using Zod
@@ -131,4 +160,36 @@ export async function authenticate(
     }
     throw error;
   }
+}
+
+export async function createCustomer(prevState: StateCustomer, formData: FormData) {
+  const validatedFields = CreateCustomer.safeParse({
+    name: formData.get('name'),
+    email: formData.get('email')
+  })
+  const id = randomUUID()
+  const imageUrl = 'https://i.pravatar.cc/300';
+
+  if (!validatedFields.success) {
+    return {
+      errors: validatedFields.error.flatten().fieldErrors,
+      message: 'Missing Fields. Failed to Create Customer.',
+    };
+  }
+
+  const { name, email } = validatedFields.data;
+
+   try {
+    await sql`
+      INSERT INTO customers (id, name, email, image_url)
+      VALUES (${id},${name}, ${email}, ${imageUrl})
+    `;
+  } catch (error) {
+    console.error('Failed to create Customer', error);
+    return {
+      message: 'Database Error: Failed to Create Customer.',
+    };
+  }
+  revalidatePath('/dashboard/customers');
+  redirect('/dashboard/customers');
 }
