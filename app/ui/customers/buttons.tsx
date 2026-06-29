@@ -1,6 +1,6 @@
 import { PencilIcon, PlusIcon, TrashIcon } from '@heroicons/react/24/outline';
 import Link from 'next/link';
-import { deleteInvoice } from '@/app/lib/actions';
+import { deleteCustomer } from '@/app/lib/actions';
 
 export function CreateCustomer() {
   return (
@@ -20,19 +20,24 @@ export function UpdateCustomer({ id }: { readonly id: string }) {
       href={`/dashboard/customers/${id}/edit`}
       className="rounded-md border p-2 hover:bg-gray-100"
     >
-      <PencilIcon className="w-5" />
+      <PencilIcon className="w-5 text-yellow-500" />
     </Link>
   );
 }
 
-export function DeleteCustomer({ id }: { readonly id: string }) {
-  const deleteInvoiceWithId = deleteInvoice.bind(null, id);
+export function DeleteCustomer({ customer }: { readonly customer: any }) {
+  const deleteCustomerWithId = deleteCustomer.bind(null, customer.id);
 
   return (
-    <form action={deleteInvoiceWithId}>
-      <button type="submit" className="rounded-md border p-2 hover:bg-gray-100">
+    <form action={deleteCustomerWithId}>
+      <button 
+        disabled={customer.total_invoices > 0} 
+        type="submit" 
+        className="rounded-md border p-2 hover:bg-gray-100 disabled:opacity-50 disabled:cursor-not-allowed group"
+      >
         <span className="sr-only">Delete</span>
-        <TrashIcon className="w-5" />
+        
+        <TrashIcon className="w-5 text-red-600 transition-colors group-disabled:text-gray-400" />
       </button>
     </form>
   );

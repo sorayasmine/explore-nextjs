@@ -10,8 +10,7 @@ export default function Form() {
     const [state, formAction] = useActionState(createCustomer, initialState)
 
     return (
-        <form action={formAction}>
-            
+        <form action={formAction}>            
             <div className="rounded-md bg-gray-50 p-4 md:p-6">
                 <div className="mb-4">
                     <label htmlFor="name" className="mb-2 block text-sm font-medium">
@@ -32,11 +31,8 @@ export default function Form() {
                         </p>
                         ))}
                     </div>
-                    </div>
                 </div>
-            </div>
-            <div className="rounded-md bg-gray-50 p-4 md:p-6 mt-6">
-                <div>
+                <div className="mt-4">
                     <label htmlFor="email" className="mb-2 block text-sm font-medium">
                         Email
                     </label>
@@ -58,6 +54,7 @@ export default function Form() {
                             ))}
                         </div>
                     </div>
+                </div>
                 </div>
             </div>
             <div className="mt-6 flex justify-end gap-4">
