@@ -65,7 +65,7 @@ export default async function CustomersTable({
                   </div>
                 ))}
               </div>
-              <table className="hidden min-w-full rounded-md text-gray-900 md:table">
+              <table className="min-w-full rounded-md text-gray-900 table">
                 <thead className="rounded-md bg-gray-50 text-left text-sm font-normal">
                   <tr>
                     <th scope="col" className="px-4 py-5 font-medium sm:pl-6">
@@ -86,42 +86,55 @@ export default async function CustomersTable({
                   </tr>
                 </thead>
 
-                <tbody className="divide-y divide-gray-200 text-gray-900">
-                  {customers.map((customer) => (
-                    <tr key={customer.id} className="group">
-                      <td className="whitespace-nowrap bg-white py-5 pl-4 pr-3 text-sm text-black group-first-of-type:rounded-md group-last-of-type:rounded-md sm:pl-6">
-                        <div className="flex items-center gap-3">
-                          <Image
-                            src={customer.image_url}
-                            className="rounded-full"
-                            alt={`${customer.name}'s profile picture`}
-                            width={28}
-                            height={28}
-                          />
-                          <p>{customer.name}</p>
-                        </div>
-                      </td>
-                      <td className="whitespace-nowrap bg-white px-4 py-5 text-sm">
-                        {customer.email}
-                      </td>
-                      <td className="whitespace-nowrap bg-white px-4 py-5 text-sm">
-                        {customer.total_invoices}
-                      </td>
-                      <td className="whitespace-nowrap bg-white px-4 py-5 text-sm">
-                        {customer.total_pending}
-                      </td>
-                      <td className="whitespace-nowrap bg-white px-4 py-5 text-sm group-first-of-type:rounded-md group-last-of-type:rounded-md">
-                        {customer.total_paid}
-                      </td>
-                       <td className="whitespace-nowrap bg-white py-3 pl-6 pr-3">
-                          <div className="flex justify-end gap-3">
-                            <UpdateCustomer id={customer.id} />
-                            <DeleteCustomer customer={customer} />
+                { customers.length ? (
+                  <tbody className="divide-y divide-gray-200 text-gray-900">
+                    {customers.map((customer) => (
+                      <tr key={customer.id} className="group">
+                        <td className="whitespace-nowrap bg-white py-5 pl-4 pr-3 text-sm text-black group-first-of-type:rounded-md group-last-of-type:rounded-md sm:pl-6">
+                          <div className="flex items-center gap-3">
+                            <Image
+                              src={customer.image_url}
+                              className="rounded-full"
+                              alt={`${customer.name}'s profile picture`}
+                              width={28}
+                              height={28}
+                            />
+                            <p>{customer.name}</p>
                           </div>
                         </td>
+                        <td className="whitespace-nowrap bg-white px-4 py-5 text-sm">
+                          {customer.email}
+                        </td>
+                        <td className="whitespace-nowrap bg-white px-4 py-5 text-sm">
+                          {customer.total_invoices}
+                        </td>
+                        <td className="whitespace-nowrap bg-white px-4 py-5 text-sm">
+                          {customer.total_pending}
+                        </td>
+                        <td className="whitespace-nowrap bg-white px-4 py-5 text-sm group-first-of-type:rounded-md group-last-of-type:rounded-md">
+                          {customer.total_paid}
+                        </td>
+                        <td className="whitespace-nowrap bg-white py-3 pl-6 pr-3">
+                            <div className="flex justify-end gap-3">
+                              <UpdateCustomer id={customer.id} />
+                              <DeleteCustomer customer={customer} />
+                            </div>
+                          </td>
+                      </tr>
+                    ))}
+                  </tbody>
+                ) : (
+                  <tbody>
+                    <tr>
+                      <td colSpan={6} className="text-center py-10 bg-white rounded-md">
+                        <span className="font-semibold text-gray-500">
+                          Data Not Found
+                        </span>
+                      </td>
                     </tr>
-                  ))}
-                </tbody>
+                  </tbody>
+                  )
+                }
               </table>
             </div>
           </div>

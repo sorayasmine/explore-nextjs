@@ -1,7 +1,7 @@
 import Pagination from '@/app/ui/invoices/pagination';
 import Table from '@/app/ui/customers/table';
 import { Suspense } from 'react';
-import { InvoiceSkeleton } from '@/app/ui/skeletons';
+import { InvoicesTableSkeleton } from '@/app/ui/skeletons';
 import { fetchCustomersPage } from '@/app/lib/data';
 import { Metadata } from 'next';
 
@@ -21,7 +21,7 @@ export default async function Page(props: {
 
   return (
     <div className="w-full">
-      <Suspense key={query + currentPage} fallback={<InvoiceSkeleton />}>
+      <Suspense key={query + currentPage} fallback={<InvoicesTableSkeleton />}>
         <Table query={query} currentPage={currentPage} />
       </Suspense>
       <div className="mt-5 flex w-full justify-center">
