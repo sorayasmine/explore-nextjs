@@ -3,11 +3,16 @@
 import Link from 'next/link';
 import { Button } from '@/app/ui/button';
 import { useActionState } from 'react';
-import { StateCustomer, createCustomer } from '@/app/lib/actions';
+import { StateCustomer, createCustomer, updateCustomer } from '@/app/lib/actions';
+import { Customer } from '@/app/lib/definitions';
+import { useFormStatus } from 'react-dom';
 
-export default function Form() {
+export default function Form({ customer }: { readonly customer: Customer }) {    
     const initialState: StateCustomer = { message: null, errors: {}}
-    const [state, formAction] = useActionState(createCustomer, initialState)
+    const actionMode = customer?.id ? updateCustomer.bind(null, customer?.id) : createCustomer
+    const [state, formAction] = useActionState(actionMode, initialState)
+    const dynamicBtnTitle = customer?.id ? 'Edit' : 'Create'
+    const { pending } = useFormStatus()
 
     return (
         <form action={formAction}>            
@@ -23,6 +28,7 @@ export default function Form() {
                             placeholder="Enter name"
                             className="peer block w-full cursor-pointer rounded-md border border-gray-200 py-2 pl-10 text-sm outline-2 placeholder:text-gray-500"
                             aria-describedby='name-error'
+                            defaultValue={customer?.name || ''}
                         />
                     <div id="name-error" aria-live="polite" aria-atomic="true">
                         {state.errors?.name?.map((error: string) => (
@@ -44,6 +50,7 @@ export default function Form() {
                                 placeholder="Enter Email"
                                 className="peer block w-full cursor-pointer rounded-md border border-gray-200 py-2 pl-10 text-sm outline-2 placeholder:text-gray-500"
                                 aria-describedby='email-error'
+                                defaultValue={customer?.email || ''}
                             />
                         </div>
                         <div id="email-error" aria-live="polite" aria-atomic="true">
@@ -64,7 +71,7 @@ export default function Form() {
                 >
                     Cancel
                 </Link>
-                <Button type="submit">Create Customer</Button>
+                <Button disabled={pending} type="submit">{dynamicBtnTitle} Customer</Button>
                 </div>
         </form>
     )

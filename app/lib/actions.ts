@@ -7,6 +7,7 @@ import { redirect } from 'next/navigation';
 import { signIn } from '@/auth';
 import { AuthError } from 'next-auth';
 import { randomUUID } from 'crypto';
+import { Customer } from './definitions';
 
 const sql = postgres(process.env.POSTGRES_URL!, { ssl: 'require' });
  
@@ -187,6 +188,7 @@ export async function createCustomer(prevState: StateCustomer, formData: FormDat
   } catch (error) {
     console.error('Failed to create Customer', error);
     return {
+      errors: {},
       message: 'Database Error: Failed to Create Customer.',
     };
   }
@@ -196,7 +198,7 @@ export async function createCustomer(prevState: StateCustomer, formData: FormDat
 
 export async function updateCustomer(
   id: string,
-  prevState: State,
+  prevState: StateCustomer,
   formData: FormData,
 ) {
   const validatedFields = UpdateCustomer.safeParse({
@@ -220,7 +222,9 @@ export async function updateCustomer(
       WHERE id = ${id}
     `;
   } catch (error) {
-    return { message: 'Database Error: Failed to Update Customer.' };
+    return { 
+      errors: {},
+      message: 'Database Error: Failed to Update Customer.' };
   }
  
   revalidatePath('/dashboard/customers');
@@ -230,4 +234,20 @@ export async function updateCustomer(
 export async function deleteCustomer(id: string) {
   await sql`DELETE FROM customers WHERE id = ${id}`;
   revalidatePath('/dashboard/customers');
+}
+
+export async function fetchCustomerById(id: string) {  
+  try {
+    const data = await sql`SELECT 
+      id,
+      name,
+      email
+      FROM customers
+      WHERE id = ${id}
+    `
+    return data[0] as Customer
+  } catch (err) {
+    console.error('Database Error:', err);
+    throw new Error('Failed to fetch customers');
+  }
 }
